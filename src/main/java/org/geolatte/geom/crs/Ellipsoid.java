@@ -61,12 +61,12 @@ public class Ellipsoid extends CrsIdentifiable {
     }
 
     /**
-     * Returns the inverse flattening.
+     * Gets the inverse flattening.
      *
      * <p>The inverse flattening is related to the equatorial/polar radius by the formula ivf=re/(re-rp). For perfect spheres,
      * this formula breaksdown, and a special IVF value of zero is used. [CTS-1.00], p.61</p>
      *
-     * @return
+     * @return the inverse flattening.
      */
     public double getInverseFlattening() {
         return inverseFlattening;

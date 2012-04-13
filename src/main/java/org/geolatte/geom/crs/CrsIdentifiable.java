@@ -22,13 +22,13 @@
 package org.geolatte.geom.crs;
 
 /**
- * Abstract base class for classes the are identified by a <code>CrsId</code> (e.g. by EPSG-code).
+ * Abstract base class for classes the are identified by a {@code CrsId} (e.g. by EPSG-code).
  *
- * <h2>Note on identity of <code>CrsIdentifiable</code>s:</h2>
- * <p>In theory the <code>CrsId</code> should identify uniquely the CoordinateReferenceSystem-related objects
+ * <h2>Note on identity of {@code CrsIdentifiable}s:</h2>
+ * <p>In theory the {@code CrsId} should identify uniquely the CoordinateReferenceSystem-related objects
  * (whether CRS, datum, projection, etc.). In practice this is often not the case. Two cases stand out. </p>
  * <ul>
- *  <li>users can add their own definitions on some type (e.g. <code>Projection</code>s, <code>Ellipsoid</code>s.</li>
+ *  <li>users can add their own definitions on some type (e.g. {@code Projection}s, {@code Ellipsoid}s.</li>
  *  <li>some objects have multiple, inconsistent definitions, notably the "Google" projection system and the WGS-84 GeoGCS.</li>
  * </ul>
  *
@@ -43,8 +43,8 @@ abstract public class CrsIdentifiable {
     /**
      * Constructs an instance.
      *
-     * @param crsId
-     * @param name
+     * @param crsId the crs id.
+     * @param name the name of the instance
      */
     protected CrsIdentifiable(CrsId crsId, String name) {
         this.crsId = crsId;
@@ -53,18 +53,18 @@ abstract public class CrsIdentifiable {
 
 
     /**
-     * Returns the identifier for this <code>CoordinateReferenceSystem</code>.
+     * Gets the identifier for this {@code CoordinateReferenceSystem}.
      *
-     * @return
+     * @return the identifier.
      */
     public CrsId getCrsId() {
         return crsId;
     }
 
     /**
-     * Returns the name of this <code>CoordinateReferenceSystem</code>.
+     * Returns the name of this {@code CoordinateReferenceSystem}.
      *
-     * @return the name
+     * @return the name.
      */
     public String getName() {
         return name;

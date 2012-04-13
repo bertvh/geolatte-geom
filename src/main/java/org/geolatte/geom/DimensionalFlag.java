@@ -64,7 +64,7 @@ public enum DimensionalFlag {
 
 
     /**
-     * Returns an appropriate <code>DimensionalFlag</code> depending on whether coordinates have
+     * Get an appropriate <code>DimensionalFlag</code> depending on whether coordinates have
      * a Z- and/or M-coordinate component
      *
      * @param is3D specifies that coordinates have a Z-component

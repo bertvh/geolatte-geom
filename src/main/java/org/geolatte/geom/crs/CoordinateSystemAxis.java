@@ -22,7 +22,7 @@
 package org.geolatte.geom.crs;
 
 /**
- * An axis of a <code>CoordinateSystem.</code>
+ * An axis of a {@code CoordinateSystem.}
  *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: 4/29/11
@@ -47,8 +47,9 @@ public class CoordinateSystemAxis {
     }
 
     /**
-     * Returns the name of this axis.
-     * @return
+     * Gets the name of this axis.
+     *
+     * @return the name of this axis.
      */
     public String getAxisName() {
         return axisName;

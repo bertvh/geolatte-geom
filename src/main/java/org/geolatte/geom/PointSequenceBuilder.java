@@ -22,33 +22,48 @@
 package org.geolatte.geom;
 
 /**
- * A builder for <code>PointSequence</code>s.
+ * A builder for {@code PointSequence}s.
  *
- * <p>PointSequence</p>s are built by adding points in sequence.
+ * {@code PointSequence}s are built by adding points in sequence.
  *
  * @author Karel Maesen, Geovise BVBA, 2011
  */
 public interface PointSequenceBuilder {
 
     /**
-     * Adds the specified coordinates to the <code>PointSequence</code> being built.
+     * Adds the specified coordinates to the {@code PointSequence} being built.
      *
-     * @param coordinates the coordinates the
-     * @return the
+     * @param coordinates the coordinates.
+     * @return the {@code PointSequenceBuilder}.
      */
     PointSequenceBuilder add(double[] coordinates);
 
     /**
-     * @param x
-     * @param y
-     * @return
+     * Adds a new 2D point with given coordinates to the {@code PointSequence} being built.
+     *
+     * @param x the x-coordinate of the point.
+     * @param y the y-coordinate of the point.
+     * @return the {@code PointSequenceBuilder}.
      */
     PointSequenceBuilder add(double x, double y);
 
     PointSequenceBuilder add(double x, double y, double zOrm);
 
+    /**
+     * Adds a new measured 3D point with given coordinates to the {@code PointSequence} being built.
+     *
+     * @param x the x-coordinate of the point.
+     * @param y the y-coordinate of the point.
+     * @param z the z-coordinate of the point.
+     * @param m the measure value of the point.
+     * @return the {@code PointSequenceBuilder}.
+     */
     PointSequenceBuilder add(double x, double y, double z, double m);
 
+    /**
+     * Gets the {@code PointSequence} created with this builder.
+     *
+     * @return the {@code PointSequence}.
+     */
     PointSequence toPointSequence();
-
 }

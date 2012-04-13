@@ -26,7 +26,7 @@ import java.util.Arrays;
 /**
  * A coordinate system.
  *
- * <p>A coordinate system is characterized by its <code>CoordinateSystemAxis</code>es (in order).</p>
+ * <p>A coordinate system is characterized by its {@code CoordinateSystemAxis}es (in order).</p>
  *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: 4/29/11
@@ -36,11 +36,11 @@ public class CoordinateSystem {
     private final CoordinateSystemAxis[] axes;
 
     /**
-     * Constructs an <code>CoordinateSystem</code>.
+     * Constructs an {@code CoordinateSystem}.
      *
-     * <p><code>CoordinateSystem</code>s are characterized by their <code>CoordinateSystemAxis</code>es. </p>
+     * <p>{@code CoordinateSystem}s are characterized by their {@code CoordinateSystemAxis}es. </p>
      *
-     * @param axes the sequence (at least two) of its <code>CoordinateSystem</code>es.
+     * @param axes the sequence (at least two) of its {@code CoordinateSystem}es.
      * @throws IllegalArgumentException when less than two axes are specified.
      */
     public CoordinateSystem(CoordinateSystemAxis... axes) {
@@ -51,25 +51,29 @@ public class CoordinateSystem {
     }
 
     /**
-     * Returns the <code>CoordinateSystemAxis</code>es of this <code>CoordinateSystem</code> (in order).
-     * @return
+     * Gets the {@code CoordinateSystemAxis}es of this {@code CoordinateSystem}.
+     *
+     * @return an ordered array of {@code CoordinateSystemAxis}es.
      */
     public CoordinateSystemAxis[] getAxes() {
         return Arrays.copyOf(axes, axes.length);
     }
 
     /**
-     * Returns the coordinate dimension, i.e. the number of axes in this coordinate system.
-     * @return
+     * Gets the coordinate dimension, i.e. the number of axes in this coordinate system.
+     *
+     * @return the coordinate dimension.
      */
     public int getCoordinateDimension() {
         return this.axes.length;
     }
 
     /**
-     * Returns the position of the specified <code>CoordinateSystemAxis</code> in this <code>CoordinateSystem</code>.
-     * @param axis
-     * @return
+     * Gets the position of the specified {@code CoordinateSystemAxis} in this {@code CoordinateSystem}.
+     *
+     * @param axis One of the axes of this {@code CoordinateSystem}.
+     * @return the position of the given axis if present, -1 if the given axis is not part of this
+     * {@code CoordinateSystem}
      */
     public int getAxisIndex(CoordinateSystemAxis axis) {
         int i = 0;
@@ -81,20 +85,20 @@ public class CoordinateSystem {
     }
 
     /**
-     * Returns the <code>CoordinateSystemAxis</code> at the specified position.
+     * Gets the {@code CoordinateSystemAxis} at the specified index.
      *
-     * @param index
-     * @return
+     * @param index the position of the requested axis.
+     * @return the axis at the given position.
      */
     public CoordinateSystemAxis getAxis(int index) {
         return this.axes[index];
     }
 
     /**
-     * Returns the <code>Unit</code> of the axis at the specified position.
+     * Returns the {@code Unit} of the axis at the specified index.
      *
-     * @param index
-     * @return
+     * @param index the position of the requested axis.
+     * @return the unit of the axis at the given position.
      */
     public Unit getAxisUnit(int index){
         return this.axes[index].getUnit();

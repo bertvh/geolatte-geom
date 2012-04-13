@@ -22,7 +22,7 @@
 package org.geolatte.geom.crs;
 
 /**
- * Describes the units of a <code>CoordinateSystemAxis</code>.
+ * Describes the units of a {@code CoordinateSystemAxis}.
  *
  */
 public class Unit extends CrsIdentifiable {
@@ -47,10 +47,11 @@ public class Unit extends CrsIdentifiable {
     /**
      * Creates an instance.
      *
-     * @param crsId
-     * @param name
-     * @param type
-     * @param conversionFactor
+     * @param crsId the crsId.
+     * @param name the name.
+     * @param type the type of the units used.
+     * @param conversionFactor the scalar value that converts a value of this {@code Unit} to the fundamental unit
+     * for this type of unit.
      */
     public Unit(CrsId crsId, String name, Type type, double conversionFactor) {
         super(crsId, name);
@@ -59,9 +60,9 @@ public class Unit extends CrsIdentifiable {
     }
 
     /**
-     * Returns the fundamental unit for this type of <code>Unit</code>.
+     * Returns the fundamental unit for this type of {@code Unit}.
      *
-     * @param type the type of <code>Unit</code>
+     * @param type the type of {@code Unit}
      * @return Meter for linear, Radian for angular units.
      */
     public static Unit getFundamentalUnit(Type type) {
@@ -70,19 +71,19 @@ public class Unit extends CrsIdentifiable {
     }
 
     /**
-     * Returns the conversion factor: the scalar value that converts a value of this <code>Unit</code> to the fundamental unit
+     * Gets the conversion factor: the scalar value that converts a value of this {@code Unit} to the fundamental unit
      * for this type of unit.
      *
-     * @return
+     * @return the conversion factor.
      */
     public double getConversionFactor() {
         return conversionFactor;
     }
 
     /**
-     * Returns true if this <code>Unit</code> is angular.
+     * Tests whether this {@code Unit} is angular.
      *
-     * @return
+     * @return true if this {@code Unit} is angular, false otherwise.
      */
     public boolean isAngular() {
         return this.type == Type.ANGULAR;

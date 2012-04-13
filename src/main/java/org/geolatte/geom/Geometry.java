@@ -27,7 +27,7 @@ import org.geolatte.geom.crs.CrsId;
 import java.io.Serializable;
 
 /**
- * The base class for <code>Geometry</code>s.
+ * The base class for {@code Geometry}s.
  *
  * @author Karel Maesen, Geovise BVBA, 2011
  *
@@ -44,17 +44,17 @@ public abstract class Geometry implements Serializable {
         PointSequence[] sequences = new PointSequence[geometries.length];
         boolean is3D = false;
         boolean isMeasured = false;
-        CrsId srid = CrsId.UNDEFINED;
+        CrsId crsId = CrsId.UNDEFINED;
         for (int i = 0; i < geometries.length; i++) {
             if (geometries[i] == null)
                 throw new IllegalArgumentException("Geometry array must not contain null-entries.");
             if (i == 0) {
                 is3D = geometries[i].is3D();
                 isMeasured = geometries[i].isMeasured();
-                srid = geometries[i].getCrsId();
+                crsId = geometries[i].getCrsId();
             } else if ((is3D != geometries[i].is3D()) || (isMeasured != geometries[i].isMeasured()) ||
-                    (!srid.equals(geometries[i].getCrsId()))) {
-                throw new IllegalArgumentException("Geometries must all have same srid and dimension");
+                    (!crsId.equals(geometries[i].getCrsId()))) {
+                throw new IllegalArgumentException("Geometries must all have same crsId and dimension");
             }
             sequences[i] = (geometries[i]).getPoints();
         }
@@ -67,10 +67,10 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Returns the coordinate dimension of this <code>Geometry</code>
+     * Returns the coordinate dimension of this {@code Geometry}
      *
      * <p>The coordinate dimension is the number of components in the coordinates of the points in
-     * this <code>Geometry</code>. </p>
+     * this {@code Geometry}. </p>
      *
      * @return the coordinate dimension
      */
@@ -79,28 +79,28 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Returns the reference to the coordinate reference system of this <code>Geometry</code>
+     * Get the crs id.
      *
-     * @return
+     * @return the reference to the coordinate reference system of this {@code Geometry}.
      */
     public CrsId getCrsId() {
         return crsId;
     }
 
     /**
-     * Returns the numeric identifier of the coordinate reference system of this <code>Geometry</code>.
+     * Get the srid.
      *
      * <p>A SRID is usually interpreted as meaning the EPSG-code for the coordinate reference system. In this
      * implementation, this is not enforced.</p>
      *
-     * @return
+     * @return the numeric identifier of the coordinate reference system of this {@code Geometry}.
      */
     public int getSRID(){
         return crsId.getCode();
     }
 
     /**
-     * Tests whether this <code>Geometry</code> has Z-coordinates.
+     * Tests whether this {@code Geometry} has Z-coordinates.
      *
      * @return true if this instance has Z-coordinates.
      */
@@ -109,7 +109,7 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Tests  whether this <code>Geometry</code> has M-coordinates.
+     * Tests  whether this {@code Geometry} has M-coordinates.
      *
      * @return true if this instance has M-coordinates.
      */
@@ -118,28 +118,28 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Tests whether this <code>Geometry</code> corresponds to the empty set.
+     * Tests whether this {@code Geometry} corresponds to the empty set.
      *
-     * @return
+     * @return true if the list is empty, false otherwise.
      */
     public boolean isEmpty() {
         return this.getPoints().isEmpty();
     }
 
     /**
-     * Returns the number of points in the <code>PointSequence</code> of this <code>Geometry</code>.
+     * Gets the number of points in the {@code PointSequence} of this {@code Geometry}.
      *
-     * @return
+     * @return the number of points.
      */
     public int getNumPoints() {
         return getPoints().size();
     }
 
     /**
-     * Returns the point at the specified index in the <code>PointSequence</code> of this <code>Geometry</code>.
+     * Gets the point at the specified index in the {@code PointSequence} of this {@code Geometry}.
      *
-     * @param index the position in the <code>PointSequence</code> (first point is at index 0).
-     * @return
+     * @param index the position in the {@code PointSequence} (first point is at index 0).
+     * @return the point at the given index.
      */
     public Point getPointN(int index) {
         if (index >= getPoints().size()) {
@@ -151,9 +151,11 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Extracts the first <code>CrsId</code> from an array of <code>Geometry</code>s if
-     * the array is non-null and not empty. Otherwise returns <code>CrsId.UNDEFINED</code>.
+     * Extracts the first {@code CrsId} from an array of {@code Geometry}s if
+     * the array is non-null and not empty. Otherwise returns {@code CrsId.UNDEFINED}.
      *
+     * @param geometries An array of geometries
+     * @return a {@code CrsId}.
      */
     protected static CrsId getCrsId(Geometry[] geometries){
         if (geometries == null || geometries.length == 0) {
@@ -163,8 +165,11 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Extracts the first <code>GeometryOperations</code> from an array of <code>Geometry</code>s if
-     * the array is non-null and not empty. Otherwise returns <code>Null</code>.
+     * Extracts the first {@code GeometryOperations} from an array of {@code Geometry}s if
+     * the array is non-null and not empty. Otherwise returns {@code Null}.
+     *
+     * @param geometries An array of geometries.
+     * @return a {@code GeometryOperations} or {@code Null}.
      */
     protected static GeometryOperations getGeometryOperations(Geometry[] geometries){
         if (geometries == null || geometries.length == 0) {
@@ -176,9 +181,9 @@ public abstract class Geometry implements Serializable {
 
 
     /**
-     * Returns the associated <code>PointSequence</code>.
+     * Gets the associated {@code PointSequence}.
      *
-     * @return
+     * @return the {@code PointSequence}
      */
     public abstract PointSequence getPoints();
 
@@ -215,16 +220,16 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Returns the type of this <code>Geometry</code>.
-     * @return
+     * Gets the type of this {@code Geometry}.
+     * @return the {@code GeometryType}.
      */
     public abstract GeometryType getGeometryType();
 
     /**
-     * Tests if this <code>Geometry</code> has no anomalous geometric points such as
+     * Tests if this {@code Geometry} has no anomalous geometric points such as
      * self-intersections or self tagency.
      *
-     * @return
+     * @return true if this is a simple geometry, false otherwise.
      */
     public boolean isSimple() {
         GeometryOperation<Boolean> op = getGeometryOperations().createIsSimpleOp(this);
@@ -232,9 +237,9 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Returns the boundary of this <code>Geometry</code>.
+     * Gets the boundary of this {@code Geometry}.
      *
-     * @return
+     * @return the boundary of this {@code Geometry}
      */
     public Geometry getBoundary() {
         GeometryOperation<Geometry> operation = getGeometryOperations().createBoundaryOp(this);
@@ -242,9 +247,9 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Returns the <code>Envelope</code> of this <code>Geometry</code>.
+     * Gets the {@code Envelope} of this {@code Geometry}.
      *
-     * @return
+     * @return the {@code Envelope} of this {@code Geometry}.
      */
     public Envelope getEnvelope() {
         GeometryOperation<Envelope> operation = getGeometryOperations().createEnvelopeOp(this);
@@ -252,10 +257,10 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
-     * Tests whether this <code>Geometry</code> is spatially disjoint from the specified <code>Geometry</code>.
+     * Tests whether this {@code Geometry} is spatially disjoint from the given {@code Geometry}.
      *
-     * @param other
-     * @return
+     * @param other The other geometry.
+     * @return true if disjoint, false otherwise.
      */
     public boolean disjoint(Geometry other) {
         return !intersects(other);

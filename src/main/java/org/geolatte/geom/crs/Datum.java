@@ -67,9 +67,9 @@ public class Datum extends CrsIdentifiable {
     }
 
     /**
-     * Returns the <code>Ellipsoid</code> for this <code>Datum</code>
+     * Gets the {@code Ellipsoid} for this {@code Datum}
      *
-     * @return
+     * @return the {@code Ellipsoid}.
      */
     public Ellipsoid getEllipsoid() {
         return ellipsoid;
@@ -78,7 +78,7 @@ public class Datum extends CrsIdentifiable {
     /**
      * Returns the Bursa-Wolf transformation parameters to the WGS84 datum.
      *
-     * <p>If the parameters are not available for this <code>Datum</code>, than an array of size zero is returned.</p>
+     * <p>If the parameters are not available for this {@code Datum}, than an array of size zero is returned.</p>
      *
      * @return the parameters, or an empty array if the parameters are not present.
      */

@@ -32,11 +32,11 @@ public abstract class CoordinateReferenceSystem extends CrsIdentifiable {
     private final CoordinateSystem coordinateSystem;
 
     /**
-     * Constructs a <code>CoordinateReferenceSystem</code>.
+     * Constructs a {@code CoordinateReferenceSystem}.
      *
-     * @param crsId identifies the <code>CrsId</code> for the new instance.
-     * @param name
-     * @param axes
+     * @param crsId identifies the {@code CrsId} for the new instance.
+     * @param name sets the name for the crs.
+     * @param axes the sequence (at least two) of its {@code CoordinateSystem}es.
      */
     CoordinateReferenceSystem(CrsId crsId, String name, CoordinateSystemAxis... axes) {
         super(crsId, name);
@@ -45,18 +45,16 @@ public abstract class CoordinateReferenceSystem extends CrsIdentifiable {
 
 
     /**
-     * Returns the <code>CoordinateSystem</code> associated with this <code>CoordinateReferenceSystem</code>.
-     *
-     * @return
+     * @return the {@code CoordinateSystem} associated with this {@code CoordinateReferenceSystem}.
      */
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
 
     /**
-     * Return the <code>CoordinateSystemAxis</code>es associated with this <code>CoordinateRefereeceSystem</code>.
+     * Return the {@code CoordinateSystemAxis}es associated with this {@code CoordinateRefereeceSystem}.
      *
-     * @return an array of <code>CoordinateSystemAxis</code>es.
+     * @return an array of {@code CoordinateSystemAxis}es.
      *
      */
     public CoordinateSystemAxis[] getAxes(){
