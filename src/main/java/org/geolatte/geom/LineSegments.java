@@ -24,6 +24,9 @@ package org.geolatte.geom;
 import java.util.Iterator;
 
 /**
+ * Turns a <code>PointSequence</code> into an <code>Iterable</code> over the
+ * <code>LineSegments</code> defined by each consecutive pair of <code>Point</code>s in the <code>PointSequence</code>.
+ *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: 4/25/11
  */
@@ -31,22 +34,36 @@ public class LineSegments implements Iterable<LineSegment> {
 
     private final PointSequence points;
 
-    public LineSegments(PointSequence pointSequence){
+    public LineSegments(PointSequence pointSequence) {
         this.points = pointSequence;
     }
 
     @Override
     public Iterator<LineSegment> iterator() {
-        return new Iterator<LineSegment> (){
-            int index = 0;
+
+        return new Iterator<LineSegment>() {
+
+            final Iterator<Point> iterator;
+            Point startPoint;
+
+            {
+                iterator = points.iterator();
+                if (iterator.hasNext()) {
+                    startPoint = iterator.next();
+                }
+            }
+
             @Override
             public boolean hasNext() {
-                return index < points.size() - 1;
+                return this.iterator.hasNext();
             }
 
             @Override
             public LineSegment next() {
-                return new LineSegment(points, index++);
+                Point endPoint = iterator.next();
+                LineSegment ls = new LineSegment(startPoint, endPoint);
+                startPoint = endPoint;
+                return ls;
             }
 
             @Override

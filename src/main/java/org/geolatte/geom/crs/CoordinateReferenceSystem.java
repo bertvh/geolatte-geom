@@ -34,11 +34,12 @@ public abstract class CoordinateReferenceSystem extends CrsIdentifiable {
     /**
      * Constructs a {@code CoordinateReferenceSystem}.
      *
-     * @param crsId identifies the {@code CrsId} for the new instance.
-     * @param name sets the name for the crs.
-     * @param axes the sequence (at least two) of its {@code CoordinateSystem}es.
+     * @param crsId the <code>CrsId</code> that identifies this <code>CoordinateReferenceSystem</code> uniquely
+     * @param name the commonly used name for this <code>CoordinateReferenceSystem</code>
+     * @param axes the <code>CoordinateSystemAxis</code>es for this <code>CoordinateReferenceSystem</code>
+     * @throws IllegalArgumentException if less than two <code>CoordinateSystemAxis</code>es are passed.
      */
-    CoordinateReferenceSystem(CrsId crsId, String name, CoordinateSystemAxis... axes) {
+    public CoordinateReferenceSystem(CrsId crsId, String name, CoordinateSystemAxis... axes) {
         super(crsId, name);
         this.coordinateSystem = new CoordinateSystem(axes);
     }

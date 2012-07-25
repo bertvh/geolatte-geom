@@ -46,7 +46,7 @@ abstract class AbstractPointSequenceBuilder implements PointSequenceBuilder {
     @Override
     public PointSequenceBuilder add(double x, double y) {
         if (dimensionalFlag != DimensionalFlag.XY)
-            throw new IllegalStateException("Attempting to add 2D point to pointsequence of dimension " + dimensionalFlag);
+            throw new IllegalArgumentException("Attempting to add 2D point to pointsequence of dimension " + dimensionalFlag);
         add(x);
         add(y);
         return this;
@@ -55,7 +55,7 @@ abstract class AbstractPointSequenceBuilder implements PointSequenceBuilder {
     @Override
     public PointSequenceBuilder add(double x, double y, double zOrm) {
         if (dimensionalFlag != DimensionalFlag.XYZ && dimensionalFlag != DimensionalFlag.XYM)
-            throw new IllegalStateException("Attempting to add 3D point to pointsequence of dimension " + dimensionalFlag);
+            throw new IllegalArgumentException("Attempting to add 3D point to pointsequence of dimension " + dimensionalFlag);
         add(x);
         add(y);
         add(zOrm);
@@ -65,12 +65,36 @@ abstract class AbstractPointSequenceBuilder implements PointSequenceBuilder {
     @Override
     public PointSequenceBuilder add(double x, double y, double z, double m) {
         if (dimensionalFlag != DimensionalFlag.XYZM)
-            throw new IllegalStateException("Attempting to add 3D point to pointsequence of dimension " + dimensionalFlag);
+            throw new IllegalArgumentException("Attempting to add 3D point to pointsequence of dimension " + dimensionalFlag);
         add(x);
         add(y);
         add(z);
         add(m);
         return this;
+    }
+
+    @Override
+    public PointSequenceBuilder add(Point point) {
+        if (point.is3D() != dimensionalFlag.is3D() || point.isMeasured() != dimensionalFlag.isMeasured()) {
+             throw new IllegalArgumentException("Attempting to add Point to pointsequence with inconsistent DimensionalFlag");
+        }
+        double[] coords = getPointCoordinates(point);
+        for (int i = 0; i < coords.length; i++) {
+            add(coords[i]);
+        }
+        return this;
+    }
+
+    @Override
+    public DimensionalFlag getDimensionalFlag(){
+        return this.dimensionalFlag;
+    }
+
+    private double[] getPointCoordinates(Point point) {
+        PointSequence points = point.getPoints();
+        double[] coords = new double[dimensionalFlag.getCoordinateDimension()];
+        points.getCoordinates(coords, 0);
+        return coords;
     }
 
     protected abstract void add(double val);

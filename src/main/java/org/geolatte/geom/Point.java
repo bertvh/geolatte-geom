@@ -50,18 +50,46 @@ public class Point extends Geometry {
         return points;
     }
 
+    /**
+     * Returns the X-coordinate of this <code>Point</code>.
+     *
+     * <p>If this <code>Point</code> is empty, it returns <code>Double.NaN</code>.</p>
+     *
+     * @return the X-coordinate of this <code>Point</code>
+     */
     public double getX() {
         return isEmpty() ? Double.NaN : getPoints().getX(0);
     }
 
+    /**
+     * Returns the Y-coordinate of this <code>Point</code>.
+     *
+     * <p>If this <code>Point</code> is empty, it returns <code>Double.NaN</code>.</p>
+     *
+     * @return the Y-coordinate of this <code>Point</code>
+     */
     public double getY() {
         return isEmpty() ? Double.NaN : getPoints().getY(0);
     }
 
+    /**
+     * Returns the Z-coordinate of this <code>Point</code>.
+     *
+     * <p>If this <code>Point</code> is empty, it returns <code>Double.NaN</code>.</p>
+     *
+     * @return the Z-coordinate of this <code>Point</code>
+     */
     public double getZ() {
         return isEmpty() ? Double.NaN : getPoints().getZ(0);
     }
 
+    /**
+     * Returns the M-coordinate of this <code>Point</code>.
+     *
+     * <p>If this <code>Point</code> is empty, it returns <code>Double.NaN</code>.</p>
+     *
+     * @return the M-coordinate of this <code>Point</code>
+     */
     public double getM() {
         return isEmpty() ? Double.NaN : getPoints().getM(0);
     }
@@ -84,20 +112,6 @@ public class Point extends Geometry {
     @Override
     public Geometry getBoundary() {
         return EMPTY;
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder stbuf = new StringBuilder("SRID=").append(getSRID()).append(",");
-        stbuf.append(getX()).append(",").append(getY());
-        if (is3D()) {
-            stbuf.append(", Z=").append(getZ());
-        }
-        if (isMeasured()){
-            stbuf.append(", M=").append(getM());
-        }
-        return stbuf.toString();
-
     }
 
     @Override

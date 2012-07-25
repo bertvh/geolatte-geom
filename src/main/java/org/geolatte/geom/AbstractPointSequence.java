@@ -80,35 +80,34 @@ abstract class AbstractPointSequence implements PointSequence, CoordinateSequenc
     @Override
     public abstract PointSequence clone() ;
 
-    //TODO -- this can now be implemented much simpler now by a simple array copy
     @Override
     public void getCoordinates(double[] coordinates, int i) {
         if (coordinates.length < this.dimensionalFlag.getCoordinateDimension())
             throw new IllegalArgumentException(String.format("Coordinate array must be at least of getLength %d", this.dimensionalFlag.getCoordinateDimension()));
-        coordinates[dimensionalFlag.getIndex(CoordinateComponent.X)] = getX(i);
-        coordinates[dimensionalFlag.getIndex(CoordinateComponent.Y)] = getY(i);
+        coordinates[dimensionalFlag.X] = getX(i);
+        coordinates[dimensionalFlag.Y] = getY(i);
         if (is3D() ) {
-            coordinates[dimensionalFlag.getIndex(CoordinateComponent.Z)]  = getZ(i);
+            coordinates[dimensionalFlag.Z]  = getZ(i);
         }
         if (isMeasured()){
-            coordinates[dimensionalFlag.getIndex(CoordinateComponent.M)] = getM(i);
+            coordinates[dimensionalFlag.M] = getM(i);
         }
     }
 
-    public double getX(int i) {
-        return getCoordinate(i, CoordinateComponent.X);
+    public double getX(int position) {
+        return getCoordinate(position, CoordinateComponent.X);
     }
 
-    public double getY(int i) {
-        return getCoordinate(i, CoordinateComponent.Y);
+    public double getY(int position) {
+        return getCoordinate(position, CoordinateComponent.Y);
     }
 
-    public double getZ(int i) {
-        return getCoordinate(i, CoordinateComponent.Z);
+    public double getZ(int position) {
+        return getCoordinate(position, CoordinateComponent.Z);
     }
 
-    public double getM(int i) {
-        return getCoordinate(i, CoordinateComponent.M);
+    public double getM(int position) {
+        return getCoordinate(position, CoordinateComponent.M);
     }
 
     public Coordinate getCoordinate(int i) {
@@ -152,7 +151,7 @@ abstract class AbstractPointSequence implements PointSequence, CoordinateSequenc
     }
 
     @Override
-    public abstract double getCoordinate(int pointIndex, CoordinateComponent accessor);
+    public abstract double getCoordinate(int position, CoordinateComponent accessor);
 
     @Override
     public void setOrdinate(int i, int ordinateIndex, double value) {
