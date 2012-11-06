@@ -41,27 +41,24 @@ public abstract class Geometry implements Serializable {
 
     private final GeometryOperations geometryOperations;
 
-    //TODO -- split checking of geometries array (used in GeomColl and Polygon) from creation of Points array
-    protected static PointSequence createAndCheckPointSequence(Geometry[] geometries) {
+
+    /**
+     * Collects all PointSets in the Geometry array into a (complex) PointCollection.
+     *
+     * <p>This implementation assumes that the array does not contain NULL values. This condition
+     * should be tested before constructing the PointCollection.</p>
+     * @param geometries
+     * @return
+     */
+    protected static PointCollection collectPointSets(Geometry[] geometries) {
         if (geometries == null || geometries.length == 0) return EmptyPointSequence.INSTANCE;
-        PointSequence[] sequences = new PointSequence[geometries.length];
-        boolean is3D = false;
-        boolean isMeasured = false;
-        CrsId crsId = CrsId.UNDEFINED;
-        for (int i = 0; i < geometries.length; i++) {
-            if (geometries[i] == null)
-                throw new IllegalArgumentException("Geometry array must not contain null-entries.");
-            if (i == 0) {
-                is3D = geometries[i].is3D();
-                isMeasured = geometries[i].isMeasured();
-                crsId = geometries[i].getCrsId();
-            } else if ((is3D != geometries[i].is3D()) || (isMeasured != geometries[i].isMeasured()) ||
-                    (!crsId.equals(geometries[i].getCrsId()))) {
-                throw new IllegalArgumentException("Geometries must all have same crsId and dimension");
-            }
-            sequences[i] = (geometries[i]).getPoints();
+
+        PointCollection[] collections = new PointCollection[geometries.length];
+        for (int i = 0; i < collections.length; i++){
+            assert(geometries[i] != null);
+            collections[i] = geometries[i].getPoints();
         }
-        return new NestedPointSequence(sequences, DimensionalFlag.valueOf(is3D, isMeasured));
+        return new NestedPointCollection(collections);
     }
 
     protected Geometry(CrsId crsId, GeometryOperations geometryOperations) {
@@ -139,7 +136,11 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
+<<<<<<< HEAD
      * Gets the number of points in the {@code PointSequence} of this {@code Geometry}.
+=======
+     * Returns the number of points in the <code>PointCollection</code> of this <code>Geometry</code>.
+>>>>>>> d9e9373ba1d7d54a7d09e71f2314fc0cb304d5de
      *
      * @return the number of points.
      */
@@ -148,7 +149,11 @@ public abstract class Geometry implements Serializable {
     }
 
     /**
+<<<<<<< HEAD
      * Gets the point at the specified index in the {@code PointSequence} of this {@code Geometry}.
+=======
+     * Returns the point at the specified index in the <code>PointCollection</code> of this <code>Geometry</code>.
+>>>>>>> d9e9373ba1d7d54a7d09e71f2314fc0cb304d5de
      *
      * @param index the position in the {@code PointSequence} (first point is at index 0).
      * @return the point at the given index.
@@ -167,7 +172,7 @@ public abstract class Geometry implements Serializable {
      * the array is non-null and not empty. Otherwise returns <code>CrsId.UNDEFINED</code>.
      */
     protected static CrsId getCrsId(Geometry[] geometries) {
-        if (geometries == null || geometries.length == 0) {
+        if (geometries == null || geometries.length == 0 || geometries[0] == null) {
             return CrsId.UNDEFINED;
         }
         return geometries[0].getCrsId();
@@ -189,11 +194,11 @@ public abstract class Geometry implements Serializable {
 
 
     /**
-     * Returns the <code>PointSequence</code> that is associated with this instance
+     * Returns the <code>PointCollection</code> that is associated with this instance
      *
      * @return the {@code PointSequence}
      */
-    public abstract PointSequence getPoints();
+    public abstract PointCollection getPoints();
 
     @Override
     public boolean equals(Object o) {

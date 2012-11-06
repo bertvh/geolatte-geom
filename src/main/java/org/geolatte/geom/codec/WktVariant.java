@@ -25,9 +25,9 @@ package org.geolatte.geom.codec;
 import java.util.Set;
 
 /**
- * The punctuation characters and keywords for a particular variant of WKT.
- *
- * <p>There exist several variants for WKT (e.g. postgis EWKT, SFS version 1.2.1 WKT). Instances of <code>WktVariant</code>
+ * The punctuation characters and keywords for a particular dialect of WKT.
+ * <p/>
+ * <p>There exist several dailects for WKT (e.g. postgis EWKT, SFS version 1.2.1 WKT). Instances of <code>WktVariant</code>
  * capture these differences. This allows easy customization of the <code>WktTokenizer</code> for particular WKT variants
  * or dialects. </p>
  *
@@ -37,20 +37,20 @@ abstract class WktVariant {
 
     private final WktPunctuationToken openList;
     private final WktPunctuationToken closeList;
-    private final WktPunctuationToken elemSep;
+    private final WktPunctuationToken elementSeparator;
     private final WktPunctuationToken end = new WktPunctuationToken(' ');
 
     /**
      * Constructs an instance with the specified punctuation tokens.
      *
-     * @param openList the character that indicates the start of a list, e.g. '(' or '['
-     * @param closeList the character that indicates the end of a list, e.g. ')' or ']'
-     * @param elemSep the character that separates individual elements in a structure (usually ',')
+     * @param openList         the character that indicates the start of a list, e.g. '(' or '['
+     * @param closeList        the character that indicates the end of a list, e.g. ')' or ']'
+     * @param elementSeparator the character that separates individual elements in a structure (usually ',')
      */
-    protected WktVariant(char openList, char closeList, char elemSep) {
+    protected WktVariant(char openList, char closeList, char elementSeparator) {
         this.openList = new WktPunctuationToken(openList);
         this.closeList = new WktPunctuationToken(closeList);
-        this.elemSep = new WktPunctuationToken(elemSep);
+        this.elementSeparator = new WktPunctuationToken(elementSeparator);
     }
 
 
@@ -58,19 +58,24 @@ abstract class WktVariant {
      * Attempts to match the specified subsequence of a <code>CharSequence</code> to a keyword for the
      * this <code>WktVariant</code>.
      *
-     * @param wkt the input text
+     * @param wkt        the input text
      * @param currentPos the start position for the match
-     * @param endPos the end position for the match
+     * @param endPos     the end position for the match
      * @return a matching <code>WktKeywordToken</code>
-     * @throws WktParseException if nothing matches at the specified substring.
+     * @throws WktDecodeException if nothing matches at the specified substring.
      */
     public WktKeywordToken matchKeyword(CharSequence wkt, int currentPos, int endPos) {
-        for (WktKeywordToken token : getWktKeywords()){
-             if (token.matches(wkt, currentPos, endPos)) {
-                 return token;
-             }
+        for (WktKeywordToken token : getWktKeywords()) {
+            if (token.matches(wkt, currentPos, endPos)) {
+                return token;
+            }
         }
-        throw new WktParseException(String.format("Can't interpret word %s in Wkt.", wkt.subSequence(currentPos, endPos)));
+        throw new WktDecodeException(
+                String.format(
+                        "Can't interpret word %s in Wkt.",
+                        wkt.subSequence(currentPos, endPos)
+                )
+        );
     }
 
     /**
@@ -88,8 +93,8 @@ abstract class WktVariant {
         return closeList;
     }
 
-    public WktPunctuationToken getElemSep() {
-        return elemSep;
+    public WktPunctuationToken getElementSeparator() {
+        return elementSeparator;
     }
 
     public WktPunctuationToken end() {
@@ -105,6 +110,6 @@ abstract class WktVariant {
     }
 
     public char getElemSepChar() {
-        return getElemSep().getChar();
+        return getElementSeparator().getChar();
     }
 }

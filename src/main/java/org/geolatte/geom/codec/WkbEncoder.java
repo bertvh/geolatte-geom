@@ -14,34 +14,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with GeoLatte.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010 - 2011 and Ownership of code is shared by:
+ * Copyright (C) 2010 - 2012 and Ownership of code is shared by:
  * Qmino bvba - Romeinsestraat 18 - 3001 Heverlee  (http://www.qmino.com)
  * Geovise bvba - Generaal Eisenhowerlei 9 - 2140 Antwerpen (http://www.geovise.com)
  */
 
 package org.geolatte.geom.codec;
 
+import org.geolatte.geom.ByteBuffer;
+import org.geolatte.geom.ByteOrder;
+import org.geolatte.geom.Geometry;
+
 /**
- * A WktToken that consists of a single char  to indicate grouping (list open/close), or
- * to delimit values.
+ * An encoder for WKB (Well-Known Binary) encoded <code>Geometries</code>.
+ *
+ * <p>In general <code>WkbEncoder</code> implementations are not be thread-safe.</p>
  *
  * @author Karel Maesen, Geovise BVBA
- *         creation-date: 11/18/11
+ *         creation-date: 9/29/12
  */
-class WktPunctuationToken implements WktToken {
-
-    private final char punctuationChar;
-
-    public WktPunctuationToken(char c){
-        this.punctuationChar = c;
-    }
-
-    public char getChar(){
-        return punctuationChar;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(punctuationChar);
-    }
+public interface WkbEncoder {
+    /**
+     * Encodes a <code>Geometry</code> to its WKB representation
+     * @param geometry the geometry to encode
+     * @param byteOrder the bye-order for the WKB representation
+     * @return a ByteBuffer containing the binary WKB representation of the specified geometry using the specified byte-order
+     */
+    ByteBuffer encode(Geometry geometry, ByteOrder byteOrder);
 }

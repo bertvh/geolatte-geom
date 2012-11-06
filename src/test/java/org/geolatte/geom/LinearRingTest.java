@@ -35,11 +35,11 @@ import static org.junit.Assert.fail;
  */
 public class LinearRingTest {
 
-    PointSequence validPoints = PointSequenceFactory.create(new double[]{0,0,10,0,10,10,0,10,0,0}, DimensionalFlag.XY);
+    PointSequence validPoints = PointCollectionFactory.create(new double[]{0, 0, 10, 0, 10, 10, 0, 10, 0, 0}, DimensionalFlag.XY);
 
-    PointSequence tooFewPoints = PointSequenceFactory.create(new double[]{0,0,0,0}, DimensionalFlag.XY);
+    PointSequence tooFewPoints = PointCollectionFactory.create(new double[]{0, 0, 0, 0}, DimensionalFlag.XY);
 
-    PointSequence notClosedPoints = PointSequenceFactory.create(new double[]{0,0,10,0,10,10,0,10,0.1,0}, DimensionalFlag.XY);
+    PointSequence notClosedPoints = PointCollectionFactory.create(new double[]{0, 0, 10, 0, 10, 10, 0, 10, 0.1, 0}, DimensionalFlag.XY);
 
 
     @Test
@@ -54,7 +54,7 @@ public class LinearRingTest {
     @Test
     public void testLinearRingShouldHaveAtLeast4Points() {
         try {
-            LinearRing invalid = new LinearRing(tooFewPoints, CrsId.UNDEFINED);
+            new LinearRing(tooFewPoints, CrsId.UNDEFINED);
             fail("Non-empty linearRing should have at least 4 points.");
         } catch (IllegalArgumentException e) {
         }
@@ -73,7 +73,7 @@ public class LinearRingTest {
     @Test
     public void testLinearRingMustBeClosed() {
         try {
-            LinearRing invalid = new LinearRing(notClosedPoints, CrsId.UNDEFINED);
+            new LinearRing(notClosedPoints, CrsId.UNDEFINED);
             fail("Non-empty linearRing should be closed.");
         } catch (IllegalArgumentException e) {
         }

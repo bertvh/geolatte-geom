@@ -91,7 +91,7 @@ class JTSGeometryOperations implements GeometryOperations {
 
             @Override
             public Envelope execute() {
-                PointSequence ps = geometry.getPoints();
+                PointCollection ps = geometry.getPoints();
                 EnvelopeVisitor visitor = new EnvelopeVisitor(geometry.getCrsId());
                 ps.accept(visitor);
                 return visitor.result();
@@ -324,7 +324,7 @@ class JTSGeometryOperations implements GeometryOperations {
         double yMin = Double.POSITIVE_INFINITY;
         double xMax = Double.NEGATIVE_INFINITY;
         double yMax = Double.NEGATIVE_INFINITY;
-        CrsId crsId;
+        final CrsId crsId;
 
         EnvelopeVisitor(CrsId crsId) {
             this.crsId = crsId;

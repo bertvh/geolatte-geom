@@ -32,23 +32,26 @@ import java.util.Locale;
 /**
  * Encodes geometries to Postgis WKT/EWKT representations.
  *
+ * <p>This class is not thread-safe.</p>
+ *
  * @author Karel Maesen, Geovise BVBA, 2011
  */
-class PostgisWktEncoder {
+class PostgisWktEncoder implements WktEncoder<Geometry> {
 
     private final static PostgisWktVariant WKT_WORDS = new PostgisWktVariant();
-
-    //StringBuffer used so we can use DecimalFormat.format(double, StringBuffer, FieldPosition);
-    private final FieldPosition fp = new FieldPosition(NumberFormat.INTEGER_FIELD);
-    private final StringBuffer builder = new StringBuffer();
-    private final NumberFormat formatter;
-
     private static final int MAX_FRACTIONAL_DIGITS = 24;
     private static final DecimalFormatSymbols US_DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.US);
 
+
+    private final FieldPosition fp = new FieldPosition(NumberFormat.INTEGER_FIELD);
+    private final NumberFormat formatter;
+
+    //StringBuffer used so we can use DecimalFormat.format(double, StringBuffer, FieldPosition);
+    private StringBuffer builder;
+    private boolean inGeometryCollection = false;
+
     /**
      * Constructs an instance.
-     *
      */
     public PostgisWktEncoder() {
         formatter = new DecimalFormat("0.#", US_DECIMAL_FORMAT_SYMBOLS);
@@ -59,17 +62,26 @@ class PostgisWktEncoder {
      * Encodes the specified <code>Geometry</code>.
      *
      * @param geometry the <code>Geometry</code> to encode
-     * @return the WKT representation of the geometry parameter value.
+     * @return the WKT representation of the given geometry
      */
+    @Override
     public String encode(Geometry geometry) {
+        prepare();
         addSridIfValid(geometry);
         addGeometry(geometry);
         return result();
     }
 
+    private void prepare() {
+        builder = new StringBuffer();
+        inGeometryCollection = false;
+    }
+
     private void addSridIfValid(Geometry geometry) {
-        if (geometry.getSRID() < 1) return;
-        this.builder.append("SRID=")
+        if (geometry.getSRID() < 1) {
+            return;
+        }
+        builder.append("SRID=")
                 .append(geometry.getSRID())
                 .append(";");
     }
@@ -113,8 +125,11 @@ class PostgisWktEncoder {
     }
 
     private void addGeometries(GeometryCollection collection, boolean withTag) {
+        inGeometryCollection = true;
         for (int i = 0; i < collection.getNumGeometries(); i++) {
-            if (i > 0) addDelimiter();
+            if (i > 0) {
+                addDelimiter();
+            }
             Geometry geom = collection.getGeometryN(i);
             if (withTag) {
                 addGeometry(geom);
@@ -136,11 +151,13 @@ class PostgisWktEncoder {
         addPointList(ring.getPoints());
     }
 
-    private void addPointList(PointSequence points) {
+    private void addPointList(PointCollection points) {
         addStartList();
         double[] coords = new double[points.getCoordinateDimension()];
         for (int i = 0; i < points.size(); i++) {
-            if (i > 0) addDelimiter();
+            if (i > 0) {
+                addDelimiter();
+            }
             points.getCoordinates(coords, i);
             addPoint(coords);
         }
@@ -154,7 +171,9 @@ class PostgisWktEncoder {
 
     private void addPoint(double[] coords) {
         for (int i = 0; i < coords.length; i++) {
-            if (i > 0) addWhitespace();
+            if (i > 0) {
+                addWhitespace();
+            }
             addNumber(coords[i]);
         }
     }
@@ -164,15 +183,15 @@ class PostgisWktEncoder {
     }
 
     private void addWhitespace() {
-        this.builder.append(" ");
+        builder.append(" ");
     }
 
     private void addDelimiter() {
-        this.builder.append(",");
+        builder.append(",");
     }
 
     private void addStartList() {
-        this.builder.append("(");
+        builder.append("(");
     }
 
     private void addEmptyKeyword() {
@@ -180,7 +199,11 @@ class PostgisWktEncoder {
     }
 
     private void addGeometryTag(Geometry geometry) {
-        this.builder.append(WKT_WORDS.wordFor(geometry));
+        if (inGeometryCollection) {
+            builder.append(WKT_WORDS.wordFor(geometry, true));
+        } else {
+            builder.append(WKT_WORDS.wordFor(geometry, false));
+        }
     }
 
     private String result() {

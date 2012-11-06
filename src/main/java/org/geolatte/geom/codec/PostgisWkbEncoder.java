@@ -22,24 +22,32 @@
 package org.geolatte.geom.codec;
 
 
-import org.geolatte.geom.DimensionalFlag;
 import org.geolatte.geom.*;
 
 /**
  * A WKBEncoder for the PostGIS EWKB dialect (versions 1.0 to 1.5).
  *
+ * <p>This class is not thread-safe.</p>
+ *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: Nov 11, 2010
  */
-class PostgisWkbEncoder {
+class PostgisWkbEncoder implements WkbEncoder {
 
-
-    public ByteBuffer encode(Geometry geom, ByteOrder wbo) {
-        ByteBuffer output = ByteBuffer.allocate(calculateSize(geom, true));
-        if (wbo != null) {
-            output.setWKBByteOrder(wbo);
+    /**
+     * Encodes a <code>Geometry</code> into a WKB representation using the specified byte-order.
+     *
+     * @param geometry The <code>Geometry</code> to be encoded as WKB.
+     * @param byteOrder  The WKB byte order, either {@link ByteOrder#XDR XDR} or {@link ByteOrder#NDR NDR}
+     * @return A buffer of bytes that contains the WKB-encoded <code>Geometry</code>.
+     */
+    @Override
+    public ByteBuffer encode(Geometry geometry, ByteOrder byteOrder) {
+        ByteBuffer output = ByteBuffer.allocate(calculateSize(geometry, true));
+        if (byteOrder != null) {
+            output.setWKBByteOrder(byteOrder);
         }
-        writeGeometry(geom, output);
+        writeGeometry(geometry, output);
         output.rewind();
         return output;
     }
@@ -48,9 +56,11 @@ class PostgisWkbEncoder {
         geom.accept(new WkbVisitor(output));
     }
 
-    private int calculateSize(Geometry geom, boolean includeSRID) {
+    private int calculateSize(Geometry geom, boolean includeSrid) {
         int size = 1 + ByteBuffer.UINT_SIZE; //size for order byte + type field
-        if (geom.getSRID() > 0 && includeSRID) size += 4;
+        if (geom.getSRID() > 0 && includeSrid) {
+            size += 4;
+        }
         if (geom instanceof GeometryCollection) {
             size += sizeOfGeometryCollection((GeometryCollection) geom);
         } else if (geom instanceof Polygon) {
@@ -97,119 +107,128 @@ class PostgisWkbEncoder {
 
     private static class WkbVisitor implements GeometryVisitor {
 
-    private final ByteBuffer output;
-    private boolean hasWrittenSRID = false;
+        private final ByteBuffer output;
+        private boolean hasWrittenSrid = false;
 
-    WkbVisitor(ByteBuffer byteBuffer) {
-        this.output = byteBuffer;
-    }
-
-    @Override
-    public void visit(Point geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
-    }
-
-    @Override
-    public void visit(LineString geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        output.putUInt(geom.getNumPoints());
-        writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
-    }
-
-    @Override
-    public void visit(Polygon geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        writeNumRings(geom, output);
-        for (LinearRing ring : geom) {
-            writeRing(ring);
+        WkbVisitor(ByteBuffer byteBuffer) {
+            this.output = byteBuffer;
         }
-    }
 
-    @Override
-    public void visit(PolyHedralSurface geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        output.putUInt(geom.getNumPatches());
-        for (Polygon pg : geom) {
-            pg.accept(this);
+        @Override
+        public void visit(Point geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
         }
-    }
 
-    @Override
-    public void visit(GeometryCollection geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        output.putUInt(geom.getNumGeometries());
-    }
-
-    @Override
-    public void visit(LinearRing geom) {
-        writeByteOrder(output);
-        DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
-        writeTypeCodeAndSRID(geom, dimension, output);
-        writeRing(geom);
-    }
-
-    private void writeRing(LinearRing geom) {
-        output.putUInt(geom.getNumPoints());
-        writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
-    }
-
-    private void writeNumRings(Polygon geom, ByteBuffer byteBuffer) {
-        byteBuffer.putUInt(geom.isEmpty() ? 0 : geom.getNumInteriorRing() + 1);
-    }
-
-    protected void writePoint(double[] coordinates, ByteBuffer output) {
-        for (double coordinate : coordinates) {
-            output.putDouble(coordinate);
+        @Override
+        public void visit(LineString geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            output.putUInt(geom.getNumPoints());
+            writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
         }
-    }
 
-    protected void writePoints(PointSequence points, int coordinateDimension, ByteBuffer output) {
-        double[] coordinates = new double[coordinateDimension];
-        for (int i = 0; i < points.size(); i++) {
-            points.getCoordinates(coordinates, i);
-            writePoint(coordinates, output);
+        @Override
+        public void visit(Polygon geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            writeNumRings(geom, output);
+            for (LinearRing ring : geom) {
+                writeRing(ring);
+            }
         }
-    }
 
-    protected void writeByteOrder(ByteBuffer output) {
-        output.put(output.getWKBByteOrder().byteValue());
-    }
-
-    protected void writeTypeCodeAndSRID(Geometry geometry, DimensionalFlag dimension, ByteBuffer output) {
-        int typeCode = getGeometryType(geometry);
-        boolean hasSRID = (geometry.getSRID() > 0);
-        if (hasSRID && !hasWrittenSRID)
-            typeCode |= PostgisWkbTypeMasks.SRID_FLAG;
-        if (dimension.isMeasured())
-            typeCode |= PostgisWkbTypeMasks.M_FLAG;
-        if (dimension.is3D())
-            typeCode |= PostgisWkbTypeMasks.Z_FLAG;
-        output.putUInt(typeCode);
-        if (hasSRID && !hasWrittenSRID) {
-            output.putInt(geometry.getSRID());
-            hasWrittenSRID = true;
+        @Override
+        public void visit(PolyHedralSurface geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            output.putUInt(geom.getNumPatches());
+            for (Polygon pg : geom) {
+                pg.accept(this);
+            }
         }
-    }
 
-    protected int getGeometryType(Geometry geometry) {
-        WkbGeometryType type = WkbGeometryType.forClass(geometry.getClass());
-        if (type == null)
-            throw new UnsupportedConversionException(String.format("Can't convert geometries of type %s", geometry.getClass().getCanonicalName()));
-        return type.getTypeCode();
-    }
+        @Override
+        public void visit(GeometryCollection geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            output.putUInt(geom.getNumGeometries());
+        }
 
-}
+        @Override
+        public void visit(LinearRing geom) {
+            writeByteOrder(output);
+            DimensionalFlag dimension = DimensionalFlag.valueOf(geom.is3D(), geom.isMeasured());
+            writeTypeCodeAndSrid(geom, dimension, output);
+            writeRing(geom);
+        }
+
+        private void writeRing(LinearRing geom) {
+            output.putUInt(geom.getNumPoints());
+            writePoints(geom.getPoints(), geom.getCoordinateDimension(), output);
+        }
+
+        private void writeNumRings(Polygon geom, ByteBuffer byteBuffer) {
+            byteBuffer.putUInt(geom.isEmpty() ? 0 : geom.getNumInteriorRing() + 1);
+        }
+
+        protected void writePoint(double[] coordinates, ByteBuffer output) {
+            for (double coordinate : coordinates) {
+                output.putDouble(coordinate);
+            }
+        }
+
+        protected void writePoints(PointSequence points, int coordinateDimension, ByteBuffer output) {
+            double[] coordinates = new double[coordinateDimension];
+            for (int i = 0; i < points.size(); i++) {
+                points.getCoordinates(coordinates, i);
+                writePoint(coordinates, output);
+            }
+        }
+
+        protected void writeByteOrder(ByteBuffer output) {
+            output.put(output.getWKBByteOrder().byteValue());
+        }
+
+        protected void writeTypeCodeAndSrid(Geometry geometry, DimensionalFlag dimension, ByteBuffer output) {
+            int typeCode = getGeometryType(geometry);
+            boolean hasSrid = (geometry.getSRID() > 0);
+            if (hasSrid && !hasWrittenSrid) {
+                typeCode |= PostgisWkbTypeMasks.SRID_FLAG;
+            }
+            if (dimension.isMeasured()) {
+                typeCode |= PostgisWkbTypeMasks.M_FLAG;
+            }
+            if (dimension.is3D()) {
+                typeCode |= PostgisWkbTypeMasks.Z_FLAG;
+            }
+            output.putUInt(typeCode);
+            if (hasSrid && !hasWrittenSrid) {
+                output.putInt(geometry.getSRID());
+                hasWrittenSrid = true;
+            }
+        }
+
+        protected int getGeometryType(Geometry geometry) {
+            WkbGeometryType type = WkbGeometryType.forClass(geometry.getClass());
+            if (type == null) {
+                throw new UnsupportedConversionException(
+                        String.format(
+                                "Can't convert geometries of type %s",
+                                geometry.getClass().getCanonicalName()
+                        )
+                );
+            }
+            return type.getTypeCode();
+        }
+
+    }
 }
 
 

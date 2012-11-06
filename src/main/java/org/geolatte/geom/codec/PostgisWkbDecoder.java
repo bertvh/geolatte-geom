@@ -26,34 +26,37 @@ import org.geolatte.geom.*;
 import org.geolatte.geom.crs.CrsId;
 
 /**
- * A Wkb Decoder for PostGIS EWKB (as implemented in Postgis 1.5).
- *
- * <p/>
- * <p>This WKBDecoder supports the EWKB dialect of PostGIS versions 1.0 tot 1.5+.
+ * A Wkb Decoder for PostGIS EWKB
+ * <p>This WKBDecoder supports the EWKB dialect of PostGIS versions 1.0 tot 1.5+.</p>
+ * <p>This implementation is not thread-safe.</p>
  *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: Nov 11, 2010
  */
-class PostgisWkbDecoder {
+class PostgisWkbDecoder implements WkbDecoder {
 
-    private CrsId crsId = CrsId.UNDEFINED;
+    private CrsId crsId;
 
     /**
-     * Decodes a Postgis WKB representation of a <code>Geometry</code>.
+     * Decodes a Postgis WKB representation in a <code>ByteBuffer</code> to a <code>Geometry</code>.
      *
-     * @param byteBuffer
-     * @return
+     * @param byteBuffer A buffer of bytes that contains a WKB-encoded <code>Geometry</code>.
+     * @return The <code>Geometry</code> that is encoded in the WKB.
      */
+    @Override
     public Geometry decode(ByteBuffer byteBuffer) {
+        crsId = CrsId.UNDEFINED;
         byteBuffer.rewind();
-        return decodeGeometry(byteBuffer);
+        Geometry geom =  decodeGeometry(byteBuffer);
+        byteBuffer.rewind();
+        return geom;
     }
 
     private Geometry decodeGeometry(ByteBuffer byteBuffer) {
         alignByteOrder(byteBuffer);
         int typeCode = readTypeCode(byteBuffer);
         WkbGeometryType wkbType = WkbGeometryType.parse((byte) typeCode);
-        readSRIDIfPresent(byteBuffer, typeCode);
+        readSridIfPresent(byteBuffer, typeCode);
         DimensionalFlag flag = getCoordinateDimension(typeCode);
         switch (wkbType) {
             case POINT:
@@ -70,7 +73,6 @@ class PostgisWkbDecoder {
                 return decodeMultiPolygon(byteBuffer);
             case MULTI_LINE_STRING:
                 return decodeMultiLineString(byteBuffer);
-
         }
         throw new IllegalStateException(String.format("WKBType %s is not supported.", wkbType));
     }
@@ -155,7 +157,7 @@ class PostgisWkbDecoder {
 
     private LinearRing readRing(ByteBuffer byteBuffer, DimensionalFlag dimensionalFlag, CrsId crsId) {
         int numPoints = byteBuffer.getInt();
-        PointSequence ps = readPoints(numPoints,byteBuffer, dimensionalFlag);
+        PointSequence ps = readPoints(numPoints, byteBuffer, dimensionalFlag);
         return new LinearRing(ps, crsId);
     }
 
@@ -166,7 +168,7 @@ class PostgisWkbDecoder {
         return DimensionalFlag.valueOf(hasZ, hasM);
     }
 
-    private void readSRIDIfPresent(ByteBuffer byteBuffer, int typeCode) {
+    private void readSridIfPresent(ByteBuffer byteBuffer, int typeCode) {
         if (hasSrid(typeCode)) {
             crsId = CrsId.valueOf(byteBuffer.getInt());
         }

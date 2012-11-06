@@ -26,7 +26,7 @@ import java.util.Arrays;
 /**
  * A coordinate system.
  *
- * <p>A coordinate system is characterized by its {@code CoordinateSystemAxis}es (in order).</p>
+ * <p>A coordinate system is characterized by its {@link CoordinateSystemAxis CoordinateSystemAxes} (in order).</p>
  *
  * @author Karel Maesen, Geovise BVBA
  *         creation-date: 4/29/11
@@ -38,22 +38,22 @@ public class CoordinateSystem {
     /**
      * Constructs an {@code CoordinateSystem}.
      *
-     * <p>{@code CoordinateSystem}s are characterized by their {@code CoordinateSystemAxis}es. </p>
+     * <p>{@code CoordinateSystem}s are characterized by their {@link CoordinateSystemAxis CoordinateSystemAxes}. </p>
      *
-     * @param axes the sequence (at least two) of its {@code CoordinateSystem}es.
+     * @param axes the sequence (at least two) of its {@code CoordinateSystem}s.
      * @throws IllegalArgumentException when less than two axes are specified.
      */
     public CoordinateSystem(CoordinateSystemAxis... axes) {
         if (axes == null || axes.length < 2) {
-            throw new IllegalArgumentException("Require at least 2 axes");
+            throw new IllegalArgumentException("Requires at least 2 axes");
         }
         this.axes = axes;
     }
 
     /**
-     * Gets the {@code CoordinateSystemAxis}es of this {@code CoordinateSystem}.
+     * Returns the {@link CoordinateSystemAxis CoordinateSystemAxes} of this {@code CoordinateSystem} (in order).
      *
-     * @return an ordered array of {@code CoordinateSystemAxis}es.
+     * @return an ordered array of {@code CoordinateSystemAxis CoordinateSystemAxes}.
      */
     public CoordinateSystemAxis[] getAxes() {
         return Arrays.copyOf(axes, axes.length);
@@ -69,7 +69,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Gets the position of the specified {@code CoordinateSystemAxis} in this {@code CoordinateSystem}.
+     * Returns the position of the specified {@link CoordinateSystemAxis} in this {@code CoordinateSystem}.
      *
      * @param axis One of the axes of this {@code CoordinateSystem}.
      * @return the position of the given axis if present, -1 if the given axis is not part of this
@@ -85,7 +85,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Gets the {@code CoordinateSystemAxis} at the specified index.
+     * Returns the {@link CoordinateSystemAxis} at the specified position.
      *
      * @param index the position of the requested axis.
      * @return the axis at the given position.

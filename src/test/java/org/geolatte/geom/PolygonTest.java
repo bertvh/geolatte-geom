@@ -35,27 +35,27 @@ import static org.junit.Assert.fail;
 public class PolygonTest {
 
 
-    PointSequence shellPoints = PointSequenceFactory.create(new double[]{0,0,10,0,10,10,0,10,0,0}, DimensionalFlag.XY);
-    PointSequence innerPoints = PointSequenceFactory.create(new double[]{1,1,9,1,9,9,1,9,1,1}, DimensionalFlag.XY);
+    PointSequence shellPoints = PointCollectionFactory.create(new double[]{0, 0, 10, 0, 10, 10, 0, 10, 0, 0}, DimensionalFlag.XY);
+    PointSequence innerPoints = PointCollectionFactory.create(new double[]{1, 1, 9, 1, 9, 9, 1, 9, 1, 1}, DimensionalFlag.XY);
 
-    PointSequence shellPoints2 = PointSequenceFactory.create(new double[]{0,0,10,0,10,10,0,10,0,0}, DimensionalFlag.XY);
-    PointSequence innerPoints2 = PointSequenceFactory.create(new double[]{1,1,9,1,9,9,1,9,1,1}, DimensionalFlag.XY);
+    PointSequence shellPoints2 = PointCollectionFactory.create(new double[]{0, 0, 10, 0, 10, 10, 0, 10, 0, 0}, DimensionalFlag.XY);
+    PointSequence innerPoints2 = PointCollectionFactory.create(new double[]{1, 1, 9, 1, 9, 9, 1, 9, 1, 1}, DimensionalFlag.XY);
 
-    PointSequence shellPoints3 = PointSequenceFactory.create(new double[]{1,1,10,0,10,10,0,10,1,1}, DimensionalFlag.XY);
+    PointSequence shellPoints3 = PointCollectionFactory.create(new double[]{1, 1, 10, 0, 10, 10, 0, 10, 1, 1}, DimensionalFlag.XY);
 
 
     @Test
     public void testEmptyRingsThrowIllegalArgumentException(){
         try {
             LinearRing shell = LinearRing.createEmpty();
-            Polygon polygon = new Polygon(new LinearRing[]{shell});
+            new Polygon(new LinearRing[]{shell});
             fail("Polygon with empty shell should throw IllegalArgumentException.");
         } catch(IllegalArgumentException e){}
 
         try {
             LinearRing shell = new LinearRing(shellPoints, CrsId.UNDEFINED);
             LinearRing emptyInner = LinearRing.createEmpty();
-            Polygon polygon = new Polygon(new LinearRing[]{shell, emptyInner});
+            new Polygon(new LinearRing[]{shell, emptyInner});
             fail("Polygon with empty inner ring should throw IllegalArgumentException.");
         } catch(IllegalArgumentException e){}
     }

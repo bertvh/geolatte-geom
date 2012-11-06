@@ -19,27 +19,21 @@
  * Geovise bvba - Generaal Eisenhowerlei 9 - 2140 Antwerpen (http://www.geovise.com)
  */
 
-package org.geolatte.geom;
+package org.geolatte.geom.codec;
+
+import org.geolatte.geom.ByteBuffer;
+import org.geolatte.geom.Geometry;
 
 /**
- * A test for <code>PointSequence</code> equality.
- *
- * <p>Implementations must be thread-safe.</p>
- *
  * @author Karel Maesen, Geovise BVBA
- *         creation-date: 4/13/12
+ *         creation-date: 9/29/12
  */
-public interface PointSequenceEquality {
+public class CodecTestInput {
 
-    /**
-     * Tests whether two <code>PointSequence</code>s are equal.
-     *
-     * @param first
-     * @param second
-     * @return
-     */
-    public boolean equals(PointSequence first, PointSequence second);
-
+    public String wkt;
+    public ByteBuffer wkb;
+    public Geometry expected;
+    public boolean testEncoding = true;
 
 
 }

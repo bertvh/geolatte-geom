@@ -14,34 +14,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with GeoLatte.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2010 - 2011 and Ownership of code is shared by:
+ * Copyright (C) 2010 - 2012 and Ownership of code is shared by:
  * Qmino bvba - Romeinsestraat 18 - 3001 Heverlee  (http://www.qmino.com)
  * Geovise bvba - Generaal Eisenhowerlei 9 - 2140 Antwerpen (http://www.geovise.com)
  */
 
 package org.geolatte.geom.codec;
 
+import org.geolatte.geom.ByteBuffer;
+import org.geolatte.geom.Geometry;
+
 /**
- * A WktToken that consists of a single char  to indicate grouping (list open/close), or
- * to delimit values.
+ * A decoder for WKB (Well-Known Binary) encoded <code>Geometries</code>.
+ *
+ * <p>In general <code>WkbDecoder</code> implementations are not be thread-safe.</p>
  *
  * @author Karel Maesen, Geovise BVBA
- *         creation-date: 11/18/11
+ *         creation-date: 9/29/12
  */
-class WktPunctuationToken implements WktToken {
+public interface WkbDecoder {
 
-    private final char punctuationChar;
-
-    public WktPunctuationToken(char c){
-        this.punctuationChar = c;
-    }
-
-    public char getChar(){
-        return punctuationChar;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(punctuationChar);
-    }
+    /**
+     * Decodes a WKB encoded representation of a <code>Geometry</code>
+     * @param byteBuffer the WKB encoded binary representation
+     * @return the represented <code>Geometry</code>
+     */
+    Geometry decode(ByteBuffer byteBuffer);
 }
